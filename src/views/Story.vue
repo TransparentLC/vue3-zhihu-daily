@@ -26,7 +26,7 @@
             </div>
         </div>
 
-        <div class="px-2">
+        <div style="padding:0 16px">
             <question
                 v-for="(item, index) in questions"
                 :key="index"
@@ -50,7 +50,7 @@
                 <div class="modal-body">
                     <loading-circle v-if="commentDialog.loading"></loading-circle>
                     <template v-else>
-                        <div class="text-bold text-large my-2">长评 ({{ commentDialog.long.length }})</div>
+                        <div class="text-bold text-large my-2">{{ commentDialog.long.length }} 条长评</div>
                         <comment
                             v-for="item in commentDialog.long"
                             :key="item.id"
@@ -62,7 +62,7 @@
                             :likes="item.likes"
                             :reply="item.reply"
                         ></comment>
-                        <div class="text-bold text-large my-2">短评 ({{ commentDialog.short.length }})</div>
+                        <div class="text-bold text-large my-2">{{ commentDialog.short.length }} 条短评</div>
                         <comment
                             v-for="item in commentDialog.short"
                             :key="item.id"
@@ -198,6 +198,9 @@ export default {
                     if (a.href.match(/^https?:\/\/link\.zhihu\.com\/\?target=/)) {
                         a.href = decodeURIComponent(new URL(a.href).searchParams.get('target'));
                     }
+                });
+                Array.from(contentDOM.querySelectorAll('pre')).forEach(pre => {
+                    pre.style.overflowY = 'auto';
                 });
 
                 const content = contentDOM.innerHTML;

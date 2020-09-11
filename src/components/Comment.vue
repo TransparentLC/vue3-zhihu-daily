@@ -1,7 +1,7 @@
 <template>
     <div class="tile my-2">
         <div class="tile-icon">
-            <div class="avatar">
+            <div class="avatar bg-gray">
                 <img :src="avatar">
             </div>
         </div>
@@ -19,7 +19,7 @@
             </div>
             <div class="tile-subtitle">
                 <div style="white-space:pre-wrap">{{ content }}</div>
-                <div v-if="reply.content" class="p-2 s-rounded" style="background-color:#f3f3f3">
+                <div v-if="reply.content" class="p-2 s-rounded" style="background-color:#f7f7f7">
                     <span class="text-bold">{{ reply.author }}：</span>
                     <span style="white-space:pre-wrap">{{ reply.content }}</span>
                 </div>

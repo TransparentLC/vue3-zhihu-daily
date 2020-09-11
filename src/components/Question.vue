@@ -1,7 +1,7 @@
 <template>
-    <div class="text-bold h5 my-2">{{ title }}</div>
+    <div class="text-bold h5" style="margin:16px 0">{{ title }}</div>
 
-    <div v-if="avatar || author || bio" style="margin:16px 0">
+    <div v-if="avatar || author || bio" class="my-2">
         <div v-if="avatar" class="avatar avatar-lg mr-2 bg-gray float-left">
             <img :src="avatar">
         </div>

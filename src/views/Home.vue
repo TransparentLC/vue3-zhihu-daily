@@ -1,9 +1,9 @@
 <template>
     <loading-circle v-if="loading && daily.length === 0"></loading-circle>
 
-    <div class="px-2">
+    <div style="padding:16px 16px">
         <template v-for="dailyItem in daily" :key="dailyItem.date">
-            <div class="text-bold h3 mb-2" style="margin-top:32px">{{ dailyItem.date }}</div>
+            <div class="text-bold h3 mb-2" style="margin-top:24px">{{ dailyItem.date }}</div>
             <story-card
                 v-for="storyItem in dailyItem.stories"
                 :key="storyItem.id"
@@ -24,6 +24,8 @@
                 'loading': loading,
             }"
             style="width:100%"
+            :disabled="loading"
+            @click="loadStories"
         >加载更多</button>
     </div>
 </template>
