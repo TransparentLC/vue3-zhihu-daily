@@ -1,11 +1,11 @@
 <template>
     <div class="text-bold h5 my-2">{{ title }}</div>
 
-    <div style="margin:16px 0">
+    <div v-if="avatar || author || bio" style="margin:16px 0">
         <div v-if="avatar" class="avatar avatar-lg mr-2 bg-gray float-left">
             <img :src="avatar">
         </div>
-        <div>
+        <div v-if="author || bio">
             <div class="text-bold">{{ author }}</div>
             <div class="text-gray text-ellipsis">{{ bio || '&nbsp;' }}</div>
         </div>
@@ -13,12 +13,12 @@
 
     <div v-html="content"></div>
 
-    <a
+    <!-- <a
         v-if="origin"
         :href="origin"
         class="btn d-block my-2"
         target="_blank"
-    >查看知乎原文</a>
+    >查看知乎原文</a> -->
     <a
         v-if="discuss"
         :href="discuss"

@@ -17,14 +17,13 @@
         </template>
 
         <button
-            v-if="daily.length"
-            class="btn btn-primary d-block my-2"
+            v-show="daily.length"
+            ref="loadMoreBtn"
+            class="btn btn-lg btn-primary d-block my-2"
             :class="{
                 'loading': loading,
             }"
             style="width:100%"
-            :disabled="loading"
-            @click="loadStories(nextDate); nextDate.setDate(nextDate.getDate() - 1)"
         >加载更多</button>
     </div>
 </template>
@@ -33,7 +32,6 @@
 import {
     ref,
     reactive,
-    watch,
     onMounted,
 } from 'vue';
 import axios from 'axios';
@@ -48,35 +46,38 @@ export default {
     setup() {
         const daily = reactive([]);
         const loading = ref(false);
-        const nextDate = ref(new Date)
+        const nextLoadDate = ref(new Date);
+        const loadMoreBtn = ref(null);
 
-        /**
-         * @param {Date} date
-         */
-        const loadStories = async date => {
+        const loadStories = async () => {
             loading.value = true;
 
-            const beforeDate = new Date(date.getTime() + 86400000);
+            const beforeDate = new Date(nextLoadDate.value.getTime() + 86400000);
             const padStart20 = val => val.toString().padStart(2, 0);
 
             const request = await axios.get(`./news/before/${beforeDate.getFullYear() + padStart20(beforeDate.getMonth() + 1) + padStart20(beforeDate.getDate())}`);
             daily.push({
-                date: `${date.getFullYear()} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日`,
+                date: `${nextLoadDate.value.getFullYear()} 年 ${nextLoadDate.value.getMonth() + 1} 月 ${nextLoadDate.value.getDate()} 日`,
                 stories: request.data.stories,
             });
+            nextLoadDate.value.setDate(nextLoadDate.value.getDate() - 1);
             loading.value = false;
         }
 
         onMounted(() => {
-            loadStories(nextDate.value);
-            nextDate.value.setDate(nextDate.value.getDate() - 1);
+            loadStories();
+            new IntersectionObserver(entries => {
+                if (entries[0].isIntersecting) loadStories();
+            }).observe(loadMoreBtn.value);
         });
+
 
         return {
             loading,
             daily,
-            nextDate,
+            nextLoadDate,
             loadStories,
+            loadMoreBtn,
         };
     },
 }

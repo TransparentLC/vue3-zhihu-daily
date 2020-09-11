@@ -39,6 +39,29 @@
                 :content="item.content"
             ></question>
         </div>
+
+        <teleport to="#navbar-item">
+            <button
+                class="btn btn-sm bg-primary d-flex ml-1"
+                style="align-items:center"
+            >
+                <!-- https://github.com/Templarian/MaterialDesign-SVG/blob/master/svg/thumb-up.svg -->
+                <svg fill="#fff" width="24" height="24" viewBox="0 0 24 24">
+                    <path d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z"/>
+                </svg>
+                <span class="ml-1">{{ extra.popularity }}</span>
+            </button>
+            <button
+                class="btn btn-sm bg-primary d-flex ml-1"
+                style="align-items:center"
+            >
+                <!-- https://github.com/Templarian/MaterialDesign-SVG/blob/master/svg/comment-text.svg -->
+                <svg fill="#fff" width="24" height="24" viewBox="0 0 24 24">
+                    <path d="M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9M5,5V7H19V5H5M5,9V11H13V9H5M5,13V15H15V13H5Z"/>
+                </svg>
+                <span class="ml-1">{{ extra.comments }}</span>
+            </button>
+        </teleport>
     </template>
 </template>
 
@@ -68,16 +91,29 @@ export default {
         const title = ref('');
         const image = ref('');
         const credit = ref('');
-        const hue = ref('');
+        const extra = reactive({
+            longComments: 0,
+            shortComments: 0,
+            popularity: 0,
+            comments: 0,
+        });
 
         onMounted(async () => {
             loading.value = true;
 
-            const response = await axios.get(`./news/${useRoute().params.id}`);
+            const id = useRoute().params.id;
+
+            const [response, extraResponse] = await Promise.all([
+                axios.get(`./news/${id}`),
+                axios.get(`./story-extra/${id}`),
+            ]);
             title.value = response.data.title;
             image.value = response.data.image;
             credit.value = response.data.image_source;
-            hue.value = response.data.image_hue.replace(/^0x/, '#');
+            extra.longComments = extraResponse.data.long_comments;
+            extra.shortComments = extraResponse.data.short_comments;
+            extra.popularity = extraResponse.data.popularity;
+            extra.comments = extraResponse.data.comments;
 
             const parsed = (new DOMParser).parseFromString(response.data.body, 'text/html');
             Array.from(parsed.querySelectorAll('.question')).forEach(el => {
@@ -88,8 +124,11 @@ export default {
                 const origin = el.querySelector('.meta .originUrl')?.href;
 
                 const viewMore = el.querySelector('.view-more');
-                const discuss = viewMore.querySelector('a')?.href;
-                viewMore.parentNode.removeChild(viewMore);
+                let discuss;
+                if (viewMore) {
+                    discuss = viewMore.querySelector('a')?.href;
+                    viewMore.parentNode.removeChild(viewMore);
+                }
 
                 const contentDOM = el.querySelector('.content');
                 Array.from(contentDOM.querySelectorAll('p')).forEach(p => {
@@ -131,6 +170,7 @@ export default {
             title,
             image,
             credit,
+            extra,
         };
     },
 }
