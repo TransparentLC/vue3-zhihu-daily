@@ -3,6 +3,6 @@ import App from './App.vue';
 import router from './router';
 
 import axios from 'axios';
-axios.defaults.baseURL = './api/4/';
+axios.defaults.baseURL = '/api/4/';
 
 createApp(App).use(router).mount('#app');

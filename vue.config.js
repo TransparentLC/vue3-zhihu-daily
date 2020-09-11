@@ -12,7 +12,7 @@ module.exports = {
         proxy: {
             '/*': {
                 // target: 'https://zhihu-daily.transparentlc.workers.dev',
-                target: 'http://localhost/zhihu-daily.php?',
+                target: 'http://localhost/vue3-zhihu-daily/zhihu-daily.php?',
                 changeOrigin: true,
             },
         },
