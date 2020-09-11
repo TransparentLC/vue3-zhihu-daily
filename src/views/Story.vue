@@ -1,7 +1,7 @@
 <template>
-    <loading-circle :loading="loading"></loading-circle>
+    <loading-circle v-if="loading"></loading-circle>
 
-    <template v-if="!loading">
+    <template v-else>
         <div
             :style="{
                 'height': '320px',
@@ -40,6 +40,48 @@
             ></question>
         </div>
 
+        <div class="modal" :class="{ 'active': commentDialog.visible }">
+            <div class="modal-overlay"></div>
+            <div class="modal-container">
+                <div class="modal-header">
+                    <button class="btn btn-clear float-right" @click="commentDialog.visible = false"></button>
+                    <div class="modal-title h5">评论</div>
+                </div>
+                <div class="modal-body">
+                    <loading-circle v-if="commentDialog.loading"></loading-circle>
+                    <template v-else>
+                        <div class="text-bold text-large my-2">长评 ({{ commentDialog.long.length }})</div>
+                        <comment
+                            v-for="item in commentDialog.long"
+                            :key="item.id"
+                            :id="item.id"
+                            :author="item.author"
+                            :content="item.content"
+                            :avatar="item.avatar"
+                            :time="item.time"
+                            :likes="item.likes"
+                            :reply="item.reply"
+                        ></comment>
+                        <div class="text-bold text-large my-2">短评 ({{ commentDialog.short.length }})</div>
+                        <comment
+                            v-for="item in commentDialog.short"
+                            :key="item.id"
+                            :id="item.id"
+                            :author="item.author"
+                            :content="item.content"
+                            :avatar="item.avatar"
+                            :time="item.time"
+                            :likes="item.likes"
+                            :reply="item.reply"
+                        ></comment>
+                    </template>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" @click="commentDialog.visible = false">关闭</button>
+                </div>
+            </div>
+        </div>
+
         <teleport to="#navbar-item">
             <button
                 class="btn btn-sm bg-primary d-flex ml-1"
@@ -54,6 +96,7 @@
             <button
                 class="btn btn-sm bg-primary d-flex ml-1"
                 style="align-items:center"
+                @click="commentDialog.visible = true; loadComment()"
             >
                 <!-- https://github.com/Templarian/MaterialDesign-SVG/blob/master/svg/comment-text.svg -->
                 <svg fill="#fff" width="24" height="24" viewBox="0 0 24 24">
@@ -79,11 +122,13 @@ import {
 import axios from 'axios';
 import LoadingCircle from '@/components/LoadingCircle.vue';
 import Question from '@/components/Question.vue';
+import Comment from '@/components/Comment.vue';
 
 export default {
     components: {
         LoadingCircle,
         Question,
+        Comment,
     },
     setup() {
         const loading = ref(false);
@@ -97,11 +142,17 @@ export default {
             popularity: 0,
             comments: 0,
         });
+        const commentDialog = reactive({
+            visible: false,
+            loading: true,
+            loaded: false,
+            long: [],
+            short: [],
+        });
+        const id = useRoute().params.id;
 
-        onMounted(async () => {
+        const loadStory = async () => {
             loading.value = true;
-
-            const id = useRoute().params.id;
 
             const [response, extraResponse] = await Promise.all([
                 axios.get(`./news/${id}`),
@@ -162,7 +213,44 @@ export default {
             });
 
             loading.value = false;
-        });
+        }
+
+        const loadComment = async () => {
+            if (commentDialog.loaded) return;
+
+            commentDialog.loading = true;
+
+            const [ longResponse, shortResponse ] = await Promise.all([
+                axios.get(`./story/${id}/long-comments`),
+                axios.get(`./story/${id}/short-comments`),
+            ]);
+
+            commentDialog.long = longResponse.data.comments.map(e => {
+                e.time = new Date(e.time * 1000);
+                if (e.reply_to) {
+                    e.reply = e.reply_to;
+                    delete e.reply_to;
+                } else {
+                    e.reply = {};
+                }
+                return e;
+            });
+            commentDialog.short = shortResponse.data.comments.map(e => {
+                e.time = new Date(e.time * 1000);
+                if (e.reply_to) {
+                    e.reply = e.reply_to;
+                    delete e.reply_to;
+                } else {
+                    e.reply = {};
+                }
+                return e;
+            });
+
+            commentDialog.loading = false;
+            commentDialog.loaded = true;
+        };
+
+        onMounted(loadStory);
 
         return {
             loading,
@@ -171,6 +259,8 @@ export default {
             image,
             credit,
             extra,
+            commentDialog,
+            loadComment,
         };
     },
 }

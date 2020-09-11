@@ -22,7 +22,8 @@
     <a
         v-if="discuss"
         :href="discuss"
-        class="btn d-block my-2"
+        class="btn d-block mt-2"
+        style="margin-bottom:24px"
         target="_blank"
     >查看知乎讨论</a>
 </template>

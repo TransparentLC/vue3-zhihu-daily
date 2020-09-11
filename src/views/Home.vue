@@ -1,9 +1,9 @@
 <template>
-    <loading-circle :loading="loading && daily.length === 0"></loading-circle>
+    <loading-circle v-if="loading && daily.length === 0"></loading-circle>
 
     <div class="px-2">
         <template v-for="dailyItem in daily" :key="dailyItem.date">
-            <div class="text-bold text-large my-2">{{ dailyItem.date }}</div>
+            <div class="text-bold h3 mb-2" style="margin-top:32px">{{ dailyItem.date }}</div>
             <story-card
                 v-for="storyItem in dailyItem.stories"
                 :key="storyItem.id"
