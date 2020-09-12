@@ -38,8 +38,12 @@ import {
 
 const lazyloadObserver = new IntersectionObserver(
     entries => entries
-        .filter(entry => entry.isIntersecting)
-        .map(entry => entry.target)
+        // .filter(entry => entry.isIntersecting)
+        // .map(entry => entry.target)
+        .reduce((arr, entry) => {
+            if (entry.isIntersecting) arr.push(entry.target);
+            return arr;
+        }, [])
         .forEach(img => {
             const preload = new Image;
             const src = img.getAttribute('data-src');

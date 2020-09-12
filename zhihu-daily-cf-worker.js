@@ -19,6 +19,7 @@ async function handleRequest(request) {
     }
     const zhihuRequest = await fetch(`https://news-at.zhihu.com${path}`);
     for (const entry of zhihuRequest.headers.entries()) headers[entry[0]] = entry[1];
+    delete headers['set-cookie'];
     return new Response(
         await zhihuRequest.text(),
         {
