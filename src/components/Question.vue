@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    <div v-html="content"></div>
+    <div ref="container" v-html="content"></div>
 
     <!-- <a
         v-if="origin"
@@ -29,6 +29,31 @@
 </template>
 
 <script>
+import {
+    ref,
+    nextTick,
+    onMounted,
+    onBeforeUnmount,
+} from 'vue';
+
+const lazyloadObserver = new IntersectionObserver(
+    entries => entries
+        .filter(entry => entry.isIntersecting)
+        .map(entry => entry.target)
+        .forEach(img => {
+            const preload = new Image;
+            const src = img.getAttribute('data-src');
+            preload.onload = preload.onerror = () => {
+                img.src = src;
+                img.removeAttribute('data-src');
+                img.style.cssText = '';
+                img.classList.remove('s-rounded');
+            };
+            preload.src = src;
+            lazyloadObserver.unobserve(img);
+        })
+);
+
 export default {
     props: {
         title: String,
@@ -38,6 +63,21 @@ export default {
         origin: String,
         discuss: String,
         content: String,
+    },
+    setup(props) {
+        const container = ref(null);
+        let image;
+
+        onMounted(() => {
+            image = Array.from(container.value.querySelectorAll('img[data-src]'));
+            nextTick(() => image.forEach(img => lazyloadObserver.observe(img)));
+        });
+
+        onBeforeUnmount(() => image.forEach(img =>lazyloadObserver.unobserve(img)));
+
+        return {
+            container,
+        };
     },
 }
 </script>

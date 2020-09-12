@@ -114,6 +114,7 @@ import {
     reactive,
     computed,
     onMounted,
+    nextTick,
 } from 'vue';
 import {
     useRoute,
@@ -189,12 +190,19 @@ export default {
                     const parentNode = img.parentNode;
                     const grandNode = parentNode.parentNode;
                     const imgWrapper = document.createElement('p');
-                    img.classList.add('img-responsive');
+
+                    img.setAttribute('data-src', img.src);
+                    // 1px #f7f7f7
+                    img.src = 'data:image/gif;base64,R0lGODdhAQABAIAAAPf39wAAACwAAAAAAQABAAACAkQBADs=';
+                    img.style.cssText = 'width:100%;height:240px';
+                    img.classList.add('s-rounded', 'img-responsive');
+
                     imgWrapper.appendChild(img);
                     grandNode.insertBefore(imgWrapper, parentNode);
                     grandNode.removeChild(parentNode);
+
                 });
-                Array.from(contentDOM.querySelectorAll('a.wrap.external')).forEach(a => {
+                Array.from(contentDOM.querySelectorAll('a')).forEach(a => {
                     if (a.href.match(/^https?:\/\/link\.zhihu\.com\/\?target=/)) {
                         a.href = decodeURIComponent(new URL(a.href).searchParams.get('target'));
                     }
