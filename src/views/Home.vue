@@ -4,16 +4,23 @@
     <div style="padding:16px 16px">
         <template v-for="dailyItem in daily" :key="dailyItem.date">
             <div class="text-bold h3 mb-2" style="margin-top:24px">{{ dailyItem.date }}</div>
-            <story-card
+            <template
                 v-for="storyItem in dailyItem.stories"
                 :key="storyItem.id"
-                :id="storyItem.id"
-                :title="storyItem.title"
-                :url="storyItem.url"
-                :hint="storyItem.hint"
-                :image="storyItem.images[0]"
-                :hue="storyItem.hue"
-            ></story-card>
+            >
+                <router-link :to="`/story/${storyItem.id}`" custom v-slot="{ navigate }">
+                    <story-card
+                        :id="storyItem.id"
+                        :title="storyItem.title"
+                        :url="storyItem.url"
+                        :hint="storyItem.hint"
+                        :image="storyItem.images[0]"
+                        :hue="storyItem.hue"
+                        @click="navigate"
+                    ></story-card>
+                </router-link>
+            </template>
+
         </template>
 
         <button
