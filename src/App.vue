@@ -12,7 +12,7 @@
     <div class="container grid-sm px-0">
         <router-view v-slot="{ Component }">
             <keep-alive>
-                <component v-if="$route.meta.keepAlive" :is="Component" :key="$route.fullPath"></component>
+                <component v-if="$route.meta.keepAlive" :is="Component" :key="$route.path"></component>
             </keep-alive>
             <component v-if="!$route.meta.keepAlive" :is="Component"></component>
         </router-view>
@@ -24,6 +24,7 @@ $primary-color: #1976D2;
 $secondary-color: #E3F2FD;
 
 @import "node_modules/spectre.css/src/spectre";
+@import "node_modules/spectre.css/src/_calendars";
 
 body
     padding-top: 52px;
