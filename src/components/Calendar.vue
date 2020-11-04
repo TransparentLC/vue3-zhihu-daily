@@ -6,9 +6,10 @@
                 @click="prevMonth"
             >
                 <!-- https://github.com/Templarian/MaterialDesign-SVG/blob/master/svg/chevron-left.svg -->
-                <svg fill="#3b4351" width="24" height="24" viewBox="0 0 24 24">
-                    <path d="M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z"/>
-                </svg>
+                <mdi
+                    :color="'#3b4351'"
+                    :icon="'M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z'"
+                ></mdi>
             </button>
             <div class="navbar-primary">{{ header }}</div>
             <button
@@ -16,9 +17,10 @@
                 @click="nextMonth"
             >
                 <!-- https://github.com/Templarian/MaterialDesign-SVG/blob/master/svg/chevron-right.svg -->
-                <svg fill="#3b4351" width="24" height="24" viewBox="0 0 24 24">
-                    <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z"/>
-                </svg>
+                <mdi
+                    :color="'#3b4351'"
+                    :icon="'M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z'"
+                ></mdi>
             </button>
         </div>
 
@@ -65,9 +67,14 @@ import {
     computed,
 } from 'vue';
 
+import Mdi from '@/components/Mdi.vue';
+
 // 如果能直接让Date变成响应式的，哪还有这么多破事？
 
 export default {
+    components: {
+        Mdi,
+    },
     props: {
         year: {
             type: Number,

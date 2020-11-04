@@ -88,9 +88,10 @@
                 style="align-items:center"
             >
                 <!-- https://github.com/Templarian/MaterialDesign-SVG/blob/master/svg/thumb-up.svg -->
-                <svg fill="#fff" width="24" height="24" viewBox="0 0 24 24">
-                    <path d="M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z"/>
-                </svg>
+                <mdi
+                    :color="'#fff'"
+                    :icon="'M23,10C23,8.89 22.1,8 21,8H14.68L15.64,3.43C15.66,3.33 15.67,3.22 15.67,3.11C15.67,2.7 15.5,2.32 15.23,2.05L14.17,1L7.59,7.58C7.22,7.95 7,8.45 7,9V19A2,2 0 0,0 9,21H18C18.83,21 19.54,20.5 19.84,19.78L22.86,12.73C22.95,12.5 23,12.26 23,12V10M1,21H5V9H1V21Z'"
+                ></mdi>
                 <span class="ml-1">{{ extra.popularity }}</span>
             </button>
             <button
@@ -99,9 +100,10 @@
                 @click="commentDialog.visible = true; loadComment()"
             >
                 <!-- https://github.com/Templarian/MaterialDesign-SVG/blob/master/svg/comment-text.svg -->
-                <svg fill="#fff" width="24" height="24" viewBox="0 0 24 24">
-                    <path d="M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9M5,5V7H19V5H5M5,9V11H13V9H5M5,13V15H15V13H5Z"/>
-                </svg>
+                <mdi
+                    :color="'#fff'"
+                    :icon="'M9,22A1,1 0 0,1 8,21V18H4A2,2 0 0,1 2,16V4C2,2.89 2.9,2 4,2H20A2,2 0 0,1 22,4V16A2,2 0 0,1 20,18H13.9L10.2,21.71C10,21.9 9.75,22 9.5,22V22H9M5,5V7H19V5H5M5,9V11H13V9H5M5,13V15H15V13H5Z'"
+                ></mdi>
                 <span class="ml-1">{{ extra.comments }}</span>
             </button>
         </teleport>
@@ -115,23 +117,26 @@ import {
     computed,
     onMounted,
     nextTick,
+    getCurrentInstance,
 } from 'vue';
 import {
     useRoute,
     useRouter,
 } from 'vue-router';
-import axios from 'axios';
 import LoadingCircle from '@/components/LoadingCircle.vue';
 import Question from '@/components/Question.vue';
 import Comment from '@/components/Comment.vue';
+import Mdi from '@/components/Mdi.vue';
 
 export default {
     components: {
         LoadingCircle,
         Question,
         Comment,
+        Mdi,
     },
     setup() {
+        const { ctx } = getCurrentInstance();
         const loading = ref(false);
         const questions = reactive([]);
         const title = ref('');
@@ -156,8 +161,8 @@ export default {
             loading.value = true;
 
             const [response, extraResponse] = await Promise.all([
-                axios.get(`./news/${id}`),
-                axios.get(`./story-extra/${id}`),
+                ctx.$http.get(`./news/${id}`),
+                ctx.$http.get(`./story-extra/${id}`),
             ]);
             title.value = response.data.title;
             image.value = response.data.image;
@@ -232,8 +237,8 @@ export default {
             commentDialog.loading = true;
 
             const [ longResponse, shortResponse ] = await Promise.all([
-                axios.get(`./story/${id}/long-comments`),
-                axios.get(`./story/${id}/short-comments`),
+                ctx.$http.get(`./story/${id}/long-comments`),
+                ctx.$http.get(`./story/${id}/short-comments`),
             ]);
 
             commentDialog.long = longResponse.data.comments.map(e => {
