@@ -114,15 +114,10 @@
 import {
     ref,
     reactive,
-    computed,
     onMounted,
-    nextTick,
     getCurrentInstance,
 } from 'vue';
-import {
-    useRoute,
-    useRouter,
-} from 'vue-router';
+import { useRoute } from 'vue-router';
 import LoadingCircle from '@/components/LoadingCircle.vue';
 import Question from '@/components/Question.vue';
 import Comment from '@/components/Comment.vue';

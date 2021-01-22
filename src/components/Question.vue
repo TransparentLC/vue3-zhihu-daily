@@ -68,7 +68,7 @@ export default {
         discuss: String,
         content: String,
     },
-    setup(props) {
+    setup() {
         const container = ref(null);
         let image;
 

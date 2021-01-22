@@ -1,11 +1,12 @@
 import { createApp } from 'vue';
+import axios from 'axios';
 import App from './App.vue';
 import router from './router';
 
-import axios from 'axios';
-// axios.defaults.baseURL = 'https://zhihu-daily.transparentlc.workers.dev/api/4/';
-axios.defaults.baseURL = '/api/4/';
+const $http = axios.create({
+    baseURL: process.env.NODE_ENV === 'production' ? 'https://zhihu-daily.transparentlc.workers.dev/api/4/' : '/api/4/',
+});
 
 const app = createApp(App);
-app.config.globalProperties.$http = axios;
+app.config.globalProperties.$http = $http;
 app.use(router).mount('#app');
