@@ -131,7 +131,7 @@ export default {
         Mdi,
     },
     setup() {
-        const { ctx } = getCurrentInstance();
+        const { proxy: vm } = getCurrentInstance();
         const loading = ref(false);
         const questions = reactive([]);
         const title = ref('');
@@ -155,9 +155,12 @@ export default {
         const loadStory = async () => {
             loading.value = true;
 
-            const [response, extraResponse] = await Promise.all([
-                ctx.$http.get(`./news/${id}`),
-                ctx.$http.get(`./story-extra/${id}`),
+            const [
+                response,
+                extraResponse,
+            ] = await Promise.all([
+                vm.$http.get(`news/${id}`),
+                vm.$http.get(`story-extra/${id}`),
             ]);
             title.value = response.data.title;
             image.value = response.data.image;
@@ -231,9 +234,12 @@ export default {
 
             commentDialog.loading = true;
 
-            const [ longResponse, shortResponse ] = await Promise.all([
-                ctx.$http.get(`./story/${id}/long-comments`),
-                ctx.$http.get(`./story/${id}/short-comments`),
+            const [
+                longResponse,
+                shortResponse,
+            ] = await Promise.all([
+                vm.$http.get(`./story/${id}/long-comments`),
+                vm.$http.get(`./story/${id}/short-comments`),
             ]);
 
             commentDialog.long = longResponse.data.comments.map(e => {

@@ -79,7 +79,7 @@ export default {
         Calendar,
     },
     setup() {
-        const { ctx } = getCurrentInstance();
+        const { proxy: vm } = getCurrentInstance();
         const daily = reactive([]);
         const loading = ref(false);
         const nextLoadDate = ref(new Date);
@@ -92,7 +92,7 @@ export default {
             const beforeDate = new Date(nextLoadDate.value.getTime() + 86400000);
             const padStart20 = val => val.toString().padStart(2, 0);
 
-            const request = await ctx.$http.get(`./news/before/${beforeDate.getFullYear() + padStart20(beforeDate.getMonth() + 1) + padStart20(beforeDate.getDate())}`);
+            const request = await vm.$http.get(`news/before/${beforeDate.getFullYear() + padStart20(beforeDate.getMonth() + 1) + padStart20(beforeDate.getDate())}`);
             daily.push({
                 date: `${nextLoadDate.value.getFullYear()} 年 ${nextLoadDate.value.getMonth() + 1} 月 ${nextLoadDate.value.getDate()} 日`,
                 stories: request.data.stories,

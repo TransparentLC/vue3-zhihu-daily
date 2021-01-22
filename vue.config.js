@@ -17,4 +17,13 @@ module.exports = {
             },
         },
     },
+    configureWebpack: config => {
+        if (process.env.NODE_ENV === 'production') {
+            config.externals = {
+                'axios': 'axios',
+                'vue': 'Vue',
+                'vue-router': 'VueRouter',
+            };
+        }
+    },
 }
